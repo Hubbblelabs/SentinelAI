@@ -1,35 +1,50 @@
-# SentinelAI Frontend
+# Welcome to your Expo app 👋
 
-This is the frontend for SentinelAI, built using [Expo](https://expo.dev/) and [React Native](https://reactnative.dev/).
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Getting Started
+## Get started
 
-1. **Install dependencies:**
-    ```bash
-    npm install
-    ```
-2. **Start the development server:**
-    ```bash
-    npx expo start
-    ```
-3. **Run on your device:**
-    - Use the Expo Go app (iOS/Android) to scan the QR code.
-    - Or run on an emulator/simulator.
+1. Install dependencies
 
-## Project Structure
+   ```bash
+   npm install
+   ```
 
-- `App.js` — Entry point
-- `components/` — Reusable UI components
-- `screens/` — Application screens
-- `assets/` — Images and other static files
+2. Start the app
 
-## Useful Scripts
+   ```bash
+   npx expo start
+   ```
 
-- `npm start` — Start Expo server
-- `npm run android` — Run on Android emulator
-- `npm run ios` — Run on iOS simulator (macOS only)
+In the output, you'll find options to open the app in a
 
-## Learn More
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-- [Expo Documentation](https://docs.expo.dev/)
-- [React Native Documentation](https://reactnative.dev/docs/getting-started)
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Get a fresh project
+
+When you're ready, run:
+
+```bash
+npm run reset-project
+```
+
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+
+## Learn more
+
+To learn more about developing your project with Expo, look at the following resources:
+
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
