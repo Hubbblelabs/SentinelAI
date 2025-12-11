@@ -1,98 +1,257 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+/**
+ * Home Dashboard - Main screen showing safety metrics and recent incidents
+ */
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+  RefreshControl,
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAppTheme } from '../../contexts/ThemeContext';
+import { Card } from '../../components/ui/Card';
+import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
+import { mockIncidents, mockStats, getSeverityColor, getTypeLabel, getRelativeTime } from '../../data/mockData';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { theme } = useAppTheme();
+  const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    // Simulate refresh
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    scrollContent: {
+      padding: theme.spacing.lg,
+    },
+    header: {
+      marginBottom: theme.spacing.xl,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: '700',
+      color: theme.colors.text,
+      marginBottom: theme.spacing.sm,
+    },
+    subtitle: {
+      fontSize: theme.typography.subheading,
+      color: theme.colors.subText,
+    },
+    safetyScoreCard: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.lg,
+    },
+    scoreCircle: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: theme.colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+      ...theme.shadows.md,
+    },
+    scoreText: {
+      fontSize: 48,
+      fontWeight: '700',
+      color: theme.colors.text,
+    },
+    scoreLabel: {
+      fontSize: theme.typography.body,
+      color: theme.colors.text,
+      fontWeight: '600',
+    },
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.md,
+      marginBottom: theme.spacing.xl,
+    },
+    statCard: {
+      flex: 1,
+      minWidth: '47%',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+    },
+    statValue: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.text,
+      marginBottom: theme.spacing.xs,
+    },
+    statLabel: {
+      fontSize: theme.typography.caption,
+      color: theme.colors.subText,
+      textAlign: 'center',
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    sectionTitle: {
+      fontSize: theme.typography.heading,
+      fontWeight: '700',
+      color: theme.colors.text,
+    },
+    incidentCard: {
+      marginBottom: theme.spacing.md,
+    },
+    incidentHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: theme.spacing.sm,
+    },
+    incidentMeta: {
+      flex: 1,
+    },
+    incidentSender: {
+      fontSize: theme.typography.body,
+      fontWeight: '600',
+      color: theme.colors.text,
+      marginBottom: 2,
+    },
+    incidentApp: {
+      fontSize: theme.typography.caption,
+      color: theme.colors.subText,
+    },
+    incidentMessage: {
+      fontSize: theme.typography.body,
+      color: theme.colors.subText,
+      marginBottom: theme.spacing.sm,
+      fontStyle: 'italic',
+    },
+    incidentFooter: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    incidentTime: {
+      fontSize: theme.typography.caption,
+      color: theme.colors.subText,
+    },
+    emptyState: {
+      alignItems: 'center',
+      padding: theme.spacing.xl,
+    },
+    emptyIcon: {
+      fontSize: 64,
+      marginBottom: theme.spacing.md,
+    },
+    emptyText: {
+      fontSize: theme.typography.subheading,
+      color: theme.colors.subText,
+      textAlign: 'center',
+    },
+  });
+
+  const unreadIncidents = mockIncidents.filter(i => !i.read);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>Dashboard</Text>
+          <Text style={styles.subtitle}>Your safety overview</Text>
+        </View>
+
+        {/* Safety Score */}
+        <Card style={styles.safetyScoreCard} variant="muted">
+          <View style={styles.scoreCircle}>
+            <Text style={styles.scoreText}>{mockStats.safetyScore}</Text>
+          </View>
+          <Text style={styles.scoreLabel}>Safety Score</Text>
+        </Card>
+
+        {/* Stats Grid */}
+        <View style={styles.statsGrid}>
+          <Card style={styles.statCard}>
+            <Text style={styles.statValue}>{mockStats.messagesScanned.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Messages Scanned</Text>
+          </Card>
+          <Card style={styles.statCard}>
+            <Text style={styles.statValue}>{mockStats.threatsBlocked}</Text>
+            <Text style={styles.statLabel}>Threats Blocked</Text>
+          </Card>
+          <Card style={styles.statCard}>
+            <Text style={styles.statValue}>{mockStats.activeDays}</Text>
+            <Text style={styles.statLabel}>Active Days</Text>
+          </Card>
+          <Card style={styles.statCard}>
+            <Text style={styles.statValue}>{unreadIncidents.length}</Text>
+            <Text style={styles.statLabel}>New Alerts</Text>
+          </Card>
+        </View>
+
+        {/* Recent Incidents */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Recent Incidents</Text>
+        </View>
+
+        {mockIncidents.length === 0 ? (
+          <Card style={styles.emptyState}>
+            <Text style={styles.emptyIcon}>✅</Text>
+            <Text style={styles.emptyText}>
+              No incidents detected. You're all clear!
+            </Text>
+          </Card>
+        ) : (
+          mockIncidents.map((incident) => (
+            <TouchableOpacity
+              key={incident.id}
+              onPress={() => router.push(`/incident/${incident.id}`)}
+              accessibilityRole="button"
+              accessibilityLabel={`View incident from ${incident.sender}`}
+            >
+              <Card style={styles.incidentCard}>
+                <View style={styles.incidentHeader}>
+                  <View style={styles.incidentMeta}>
+                    <Text style={styles.incidentSender}>{incident.sender}</Text>
+                    <Text style={styles.incidentApp}>{incident.app}</Text>
+                  </View>
+                  <Badge
+                    label={getTypeLabel(incident.type)}
+                    variant={getSeverityColor(incident.severity)}
+                    size="small"
+                  />
+                </View>
+                <Text style={styles.incidentMessage} numberOfLines={2}>
+                  {incident.message}
+                </Text>
+                <View style={styles.incidentFooter}>
+                  <Text style={styles.incidentTime}>
+                    {getRelativeTime(incident.timestamp)}
+                  </Text>
+                  {!incident.read && (
+                    <Badge label="New" variant="primary" size="small" />
+                  )}
+                </View>
+              </Card>
+            </TouchableOpacity>
+          ))
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
