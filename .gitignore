@@ -1,0 +1,45 @@
+# Virtual environments
+sentil/
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Model files (large - train locally)
+*.onnx
+*.safetensors
+*.bin
+*.pt
+*.pth
+Ai/text_toxicity/model/fine_tuned/
+Ai/text_toxicity/model/*.onnx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Hugging Face / ML cache
+.cache/
+*.onnx.data
